@@ -186,6 +186,15 @@ button:focus-visible{outline:3px solid var(--rose);outline-offset:3px}
 .sx-list .question-card{margin:0 0 12px;padding:16px 18px 16px 22px}.sx-list .question-text{margin-bottom:0}
 mark.sx-hit{background:#FBD266;color:var(--ink);border-radius:4px;padding:0 2px}
 @media(max-width:640px){.search-btn{width:40px;height:40px}.search-btn svg{width:23px;height:23px}.sx-overlay{padding:calc(14px + env(safe-area-inset-top,0px)) 10px 14px}.sx-panel{padding:12px 12px 4px;border-radius:18px}.sx-field{height:46px}}
+.home-tools{display:flex;align-items:center;gap:2px}.bm-home{position:relative}
+.tool-badge{position:absolute;top:1px;right:-1px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--rose);color:#fff;font:700 11px/18px var(--sans);text-align:center;pointer-events:none}
+.bm-btn{flex:0 0 auto;width:36px;height:36px;border:0;border-radius:50%;background:transparent;color:var(--muted);display:grid;place-items:center;cursor:pointer;transition:background .15s,color .15s}
+.bm-btn:hover{background:var(--sage-soft);color:var(--pine)}.bm-btn svg{width:22px;height:22px}
+.bm-btn[aria-pressed="true"]{color:var(--rose)}.bm-btn[aria-pressed="true"] svg{fill:currentColor}
+.question-head>.question-meta{margin-left:auto}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,12px);max-width:min(92vw,440px);padding:12px 18px;border-radius:14px;background:var(--pine-deep);color:#fff;font-size:15px;line-height:1.45;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:120}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:640px){.bm-btn{width:32px;height:32px}.bm-btn svg{width:20px;height:20px}}
 @media(max-width:900px){
  .home-wrap{padding:calc(18px + env(safe-area-inset-top,0px)) 16px 44px}
  .hero{padding:30px 24px 26px}
@@ -258,7 +267,7 @@ const EXAM_MINUTES = 20;
 const POSITIVE = ['Chính xác!','Xuất sắc!'];
 const NEGATIVE = ['Sai rồi!','Không đúng!'];
 const COLORS = ['green','gold','red'];
-const ICON={plane:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>',book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10.5 5 8 4.5 4 4.5v13c4 0 6.5.5 8 2 1.5-1.5 4-2 8-2v-13c-4 0-6.5.5-8 2z"/><path d="M12 6.5v13"/></svg>',clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>'};
+const ICON={plane:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>',book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5C10.5 5 8 4.5 4 4.5v13c4 0 6.5.5 8 2 1.5-1.5 4-2 8-2v-13c-4 0-6.5.5-8 2z"/><path d="M12 6.5v13"/></svg>',clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',bookmark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"/></svg>',search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>'};
 let packagesBySection = [];
 let activeSession = null;
 let timerHandle = null;
@@ -368,7 +377,7 @@ function renderSearch(raw){
   info.textContent=total>SEARCH_LIMIT?`Có ${total} câu hỏi khớp · hiển thị ${SEARCH_LIMIT} câu đầu, hãy nhập thêm từ để thu hẹp kết quả.`:`Có ${total} câu hỏi khớp.`;
   list.innerHTML=r.hits.slice(0,SEARCH_LIMIT).map(it=>{
     const q=it.q,ans=q.options[q.answer];
-    return `<article class="question-card"><div class="question-head"><div class="question-num"><span class="num-pill">${q.number}</span><span>Câu hỏi</span></div><div class="question-meta">${escapeHTML(sourceMeta(q))}</div></div><p class="question-text">${highlightHits(it,r.key)}</p>${ans?`<div class="review-key">Đáp án đúng: <strong>${escapeHTML(ans.letter)}.</strong> ${renderHighlighted(ans.body,ans.yellow)}</div>`:''}</article>`;
+    return `<article class="question-card"><div class="question-head"><div class="question-num"><span class="num-pill">${q.number}</span><span>Câu hỏi</span></div><div class="question-meta">${escapeHTML(sourceMeta(q))}</div>${bookmarkBtn(q.id)}</div><p class="question-text">${highlightHits(it,r.key)}</p>${ans?`<div class="review-key">Đáp án đúng: <strong>${escapeHTML(ans.letter)}.</strong> ${renderHighlighted(ans.body,ans.yellow)}</div>`:''}</article>`;
   }).join('');
 }
 function ensureSearchUI(){
@@ -390,6 +399,32 @@ function openSearch(){
 }
 function closeSearch(){if(!searchEl)return;searchEl.hidden=true;document.body.style.overflow='';}
 
+/* ===== Đánh dấu câu hỏi khó (lưu trên trình duyệt) ===== */
+const BM_KEY='onTapThiNangDinh_bookmarks_v1';
+let bookmarks=(function(){try{const a=JSON.parse(localStorage.getItem(BM_KEY)||'[]');return Array.isArray(a)?a.filter(id=>typeof id==='string'&&getQuestionById(id)):[];}catch(e){return [];}})();
+function isBookmarked(id){return bookmarks.includes(id);}
+function bookmarkBtn(id){return `<button type="button" class="bm-btn" data-bookmark="${id}" aria-pressed="${isBookmarked(id)}" aria-label="Đánh dấu câu hỏi khó" title="Đánh dấu câu hỏi khó">${ICON.bookmark}</button>`;}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-bookmark]');if(!b)return;
+  const id=b.dataset.bookmark,i=bookmarks.indexOf(id);
+  if(i>=0)bookmarks.splice(i,1);else bookmarks.push(id);
+  try{localStorage.setItem(BM_KEY,JSON.stringify(bookmarks));}catch(err){}
+  document.querySelectorAll('[data-bookmark]').forEach(x=>{if(x.dataset.bookmark===id)x.setAttribute('aria-pressed',String(i<0));});
+  const badge=document.getElementById('bmBadge');if(badge){badge.textContent=bookmarks.length;badge.hidden=!bookmarks.length;}
+});
+let toastTimer=0;
+function showToast(msg){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';t.className='toast';t.setAttribute('role','status');document.body.appendChild(t);}
+  t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3200);
+}
+function startBookmarkSession(){
+  const set=new Set(bookmarks),qs=allQuestions().filter(q=>set.has(q.id));
+  if(!qs.length){showToast('Chưa có câu hỏi nào được đánh dấu. Bấm biểu tượng đánh dấu ở câu hỏi khó để lưu vào đây.');return;}
+  activeSession={phase:'inprogress',mode:'learn',source:'bookmarks',sessionTitle:`Câu hỏi đã đánh dấu (${qs.length} câu)`,packageId:null,questionIds:qs.map(q=>q.id),answers:qs.map(()=>null),responses:qs.map(()=>null),startedAt:Date.now(),deadline:null,submitted:false};
+  renderSession();
+}
+
 function renderHome(){
   stopTimer();
   activeSession=null;
@@ -410,7 +445,7 @@ function renderHome(){
     resume=`<div class="resume-card"><div><strong>Bài gần nhất: ${escapeHTML(saved.sessionTitle||'Bài thi ngẫu nhiên')} — ${saved.result.score.toFixed(1)} điểm</strong><p>${saved.result.correct}/${saved.result.total} câu đúng · ${escapeHTML(saved.result.elapsedText||'')}</p></div><button class="btn btn-gold" id="resumeResult">Xem kết quả</button></div>`;
   }
   app.innerHTML=`<div class="home-wrap">
-    <header class="home-header"><div class="brand"><div class="brand-mark">${ICON.plane}</div><div><p class="brand-kicker">CACK CHKQT Tân Sơn Nhất</p><h1 class="home-title">ÔN THI NĂNG ĐỊNH ANSC</h1></div></div><button type="button" class="search-btn" id="openSearch" aria-label="Tìm kiếm câu hỏi" title="Tìm kiếm câu hỏi">${ICON.search}</button></header>
+    <header class="home-header"><div class="brand"><div class="brand-mark">${ICON.plane}</div><div><p class="brand-kicker">CACK CHKQT Tân Sơn Nhất</p><h1 class="home-title">ÔN THI NĂNG ĐỊNH ANSC</h1></div></div><div class="home-tools"><button type="button" class="search-btn bm-home" id="openBookmarks" aria-label="Câu hỏi đã đánh dấu" title="Câu hỏi đã đánh dấu">${ICON.bookmark}<span class="tool-badge" id="bmBadge"${bookmarks.length?'':' hidden'}>${bookmarks.length}</span></button><button type="button" class="search-btn" id="openSearch" aria-label="Tìm kiếm câu hỏi" title="Tìm kiếm câu hỏi">${ICON.search}</button></div></header>
     ${resume}
     <section class="hero"><div><span class="hero-label">MADE BY VĂN HƯNG ANQT2 – 0979809655</span><h2>Bộ đề thi năng định ANSC<br>do A08 ban hành</h2><p>Dựa trên ngân hàng câu hỏi do Cục Quản lý xuất nhập cảnh ban hành ngày 19/05/2025</p></div>
       <div class="hero-stats"><div class="stat-box"><span class="stat-number">${total}</span><span class="stat-label">Tổng số câu hỏi</span></div><div class="stat-box"><span class="stat-number">${BANK.length}</span><span class="stat-label">Phần</span></div><div class="stat-box"><span class="stat-number">${packagesBySection.reduce((n,p)=>n+p.length,0)}</span><span class="stat-label">Chuyên đề</span></div><div class="stat-box"><span class="stat-number">${EXAM_COUNT}</span><span class="stat-label">Câu mỗi đề thi</span></div></div>
@@ -424,6 +459,7 @@ function renderHome(){
   </div>`;
   window.scrollTo({top:0,left:0,behavior:'instant'});
   document.getElementById('openSearch').addEventListener('click',openSearch);
+  document.getElementById('openBookmarks').addEventListener('click',startBookmarkSession);
   document.getElementById('goPackages').addEventListener('click',()=>document.getElementById('packages-heading').scrollIntoView({behavior:'smooth',block:'start'}));
   document.getElementById('startExam').addEventListener('click',startRandomExam);
   document.querySelectorAll('[data-start-pack]').forEach(btn=>btn.addEventListener('click',()=>startLearning(btn.dataset.startPack)));
@@ -474,11 +510,12 @@ function renderNav(questions,answers,mode){
   return `<aside class="question-nav" id="questionNav"><div class="nav-label">Câu hỏi</div>${questions.map((q,i)=>{const st=navState(q,answers[i],mode);return `<button class="nav-number ${st}" data-jump="${i}" id="nav-${i}" aria-label="${navLabel(i,st)}">${i+1}</button>`;}).join('')}</aside>`;
 }
 function renderQuestionCard(q,i,mode,answer){
-  const displayNo=mode==='learn'?q.number:i+1;
-  const meta=mode==='learn'?`Câu ${q.number} trong tài liệu`:`${escapeHTML(sourceMeta(q))}`;
+  const own=mode==='learn'&&!(activeSession&&activeSession.source==='bookmarks');
+  const displayNo=own?q.number:i+1;
+  const meta=own?`Câu ${q.number} trong tài liệu`:`${escapeHTML(sourceMeta(q))}`;
   const opts=q.options.map((o,oi)=>`<button type="button" class="answer-option" data-option="${oi}" aria-pressed="false"><span class="letter">${escapeHTML(o.letter)}</span><span class="option-copy">${escapeHTML(o.body)}</span></button>`).join('');
   const status=answer===null?'Chưa trả lời':'Đã trả lời';
-  return `<article class="question-card" id="question-${i}" data-q-index="${i}"><div class="question-head"><div class="question-num"><span class="num-pill">${displayNo}</span><span>Câu hỏi</span></div><div class="question-meta">${meta}</div></div><p class="question-text">${escapeHTML(q.text.replace(/^Câu\s+\d+\s*:\s*/i,''))}</p><div class="options">${opts}</div><div class="instant-feedback" id="feedback-${i}"></div></article>`;
+  return `<article class="question-card" id="question-${i}" data-q-index="${i}"><div class="question-head"><div class="question-num"><span class="num-pill">${displayNo}</span><span>Câu hỏi</span></div><div class="question-meta">${meta}</div>${bookmarkBtn(q.id)}</div><p class="question-text">${escapeHTML(q.text.replace(/^Câu\s+\d+\s*:\s*/i,''))}</p><div class="options">${opts}</div><div class="instant-feedback" id="feedback-${i}"></div></article>`;
 }
 function renderSession(){
   stopTimer();
@@ -486,9 +523,9 @@ function renderSession(){
   if(!questions.length){renderHome();return;}
   const mode=activeSession.mode;
   const answered=(activeSession.answers||[]).filter(x=>x!==null && x!==undefined).length;
-  let title=mode==='exam'?'Thi ngẫu nhiên':'Học từng phần';
+  let title=mode==='exam'?'Thi ngẫu nhiên':(activeSession.source==='bookmarks'?'Ôn câu hỏi khó':'Học từng phần');
   let detail=mode==='exam'?`${questions.length} câu hỏi · Thời gian ${EXAM_MINUTES} phút`:activeSession.sessionTitle;
-  app.innerHTML=`<div class="session-page">${makeTopbar(title,detail,answered,questions.length,mode)}${renderNav(questions,activeSession.answers,mode)}<main class="question-main" id="questionMain">${questions.map((q,i)=>renderQuestionCard(q,i,mode,activeSession.answers[i])).join('')}${mode==='learn'?`<div class="session-end" id="learnEnd" hidden><h2>Hoàn thành chuyên đề!</h2><p id="learnEndText"></p><button class="btn" id="learnHome">Trở về trang chủ</button></div>`:''}</main></div>`;
+  app.innerHTML=`<div class="session-page">${makeTopbar(title,detail,answered,questions.length,mode)}${renderNav(questions,activeSession.answers,mode)}<main class="question-main" id="questionMain">${questions.map((q,i)=>renderQuestionCard(q,i,mode,activeSession.answers[i])).join('')}${mode==='learn'?`<div class="session-end" id="learnEnd" hidden><h2>${activeSession.source==='bookmarks'?'Đã ôn xong nhóm câu hỏi khó!':'Hoàn thành chuyên đề!'}</h2><p id="learnEndText"></p><button class="btn" id="learnHome">Trở về trang chủ</button></div>`:''}</main></div>`;
   window.scrollTo({top:0,left:0,behavior:'instant'});
   document.getElementById('homeBtn').addEventListener('click',renderHome);
   if(mode==='exam')document.getElementById('submitExam').addEventListener('click',()=>submitExam(false));
@@ -680,7 +717,7 @@ function renderReview(){
     }).join('');
     const key=q.options[q.answer];
     const phrase=activeSession.responses?.[i]?.phrase||randomItem(correct?POSITIVE:NEGATIVE);
-    return `<article class="question-card" id="question-${i}" data-q-index="${i}" data-state="${correct?'right':chosen===null?'':'wrong'}"><div class="question-head"><div class="question-num"><span class="num-pill">${i+1}</span><span>Câu hỏi</span></div><div class="question-head"><span class="question-meta">${escapeHTML(sourceMeta(q))}</span><span class="question-status ${correct?'done':chosen===null?'':'bad'}">${status}</span></div></div><p class="question-text">${escapeHTML(q.text.replace(/^Câu\s+\d+\s*:\s*/i,''))}</p><div class="feedback-banner ${correct?'good':'bad'}">${escapeHTML(phrase)}</div><div class="options">${opts}</div><div class="review-key">Đáp án đúng: <strong>${escapeHTML(key.letter)}.</strong> ${renderHighlighted(key.body,key.yellow)}</div>${q.explanation?`<div class="review-note"><strong>Giải thích đáp án</strong><br>${escapeHTML(q.explanation)}</div>`:''}</article>`;
+    return `<article class="question-card" id="question-${i}" data-q-index="${i}" data-state="${correct?'right':chosen===null?'':'wrong'}"><div class="question-head"><div class="question-num"><span class="num-pill">${i+1}</span><span>Câu hỏi</span></div><div class="question-head"><span class="question-meta">${escapeHTML(sourceMeta(q))}</span><span class="question-status ${correct?'done':chosen===null?'':'bad'}">${status}</span>${bookmarkBtn(q.id)}</div></div><p class="question-text">${escapeHTML(q.text.replace(/^Câu\s+\d+\s*:\s*/i,''))}</p><div class="feedback-banner ${correct?'good':'bad'}">${escapeHTML(phrase)}</div><div class="options">${opts}</div><div class="review-key">Đáp án đúng: <strong>${escapeHTML(key.letter)}.</strong> ${renderHighlighted(key.body,key.yellow)}</div>${q.explanation?`<div class="review-note"><strong>Giải thích đáp án</strong><br>${escapeHTML(q.explanation)}</div>`:''}</article>`;
   }).join('');
   app.innerHTML=`<div class="session-page">${makeTopbar('Xem lại đáp án',`${r.correct}/${r.total} câu đúng · ${r.score.toFixed(1)} điểm`,r.total,r.total,'review').replace(/<div class="topbar-actions">[\s\S]*?<\/div>/,'<div class="topbar-actions"><button class="btn btn-quiet" id="reviewHome">Trang chủ</button></div>')}${renderNav(questions,activeSession.answers,'review')}<main class="question-main" id="questionMain">${cards}</main></div>`;
   window.scrollTo({top:0,left:0,behavior:'instant'});
